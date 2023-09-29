@@ -6,6 +6,21 @@ require("dotenv").config();
 
 const app = express();
 
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cors());
+app.use(bodyParser.json());
+
+// Routes
+app.get("/api/", (req, res) => {
+  res.send("This is the home page.");
+});
+
+app.all("*", (req, res) => {
+  res.status(500).json({ message: "This page doesn't exist." });
+});
+
 const startServer = async () => {
   try {
     await connectDB();
