@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/connectDB");
 require("dotenv").config();
+const errorHandler = require("./middlewares/errorMiddleware");
 
 const app = express();
 
@@ -12,15 +13,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
 
+// Routes imports
+const userRoutes = require("./routes/user");
+
 // Routes
-app.get("/api/", (req, res) => {
-  res.send("This is the home page.");
-});
+app.use("/api/users", userRoutes);
 
 app.all("*", (req, res) => {
   res.status(500).json({ message: "This page doesn't exist." });
 });
 
+// Error middleware
+app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDB();
