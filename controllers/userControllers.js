@@ -190,6 +190,46 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+const changePassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  const { oldPassword, newPassword } = req.body;
+
+  // Validation
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found. Please log in.");
+  }
+
+  if (!oldPassword || !newPassword) {
+    res.status(400);
+    throw new Error("Please add old and new password.");
+  }
+
+  if (newPassword.length < 8) {
+    res.status(400);
+    throw new Error("Your password must be at least 8 characters long.");
+  }
+
+  if (oldPassword === newPassword) {
+    res.status(400);
+    throw new Error("Your new password must be different from the old one.");
+  }
+
+  // Checking old password is correct
+  const oldPasswordIsCorrect = await bcrypt.compare(oldPassword, user.password);
+
+  if (user && oldPasswordIsCorrect) {
+    user.password = newPassword;
+
+    await user.save();
+    res.status(200).send("Password changed successfully.");
+  } else {
+    res.status(400);
+    throw new Error("Old password incorrect.");
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -197,4 +237,5 @@ module.exports = {
   getUser,
   isLoggedIn,
   updateUser,
+  changePassword,
 };

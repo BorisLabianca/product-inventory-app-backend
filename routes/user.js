@@ -6,6 +6,7 @@ const {
   getUser,
   isLoggedIn,
   updateUser,
+  changePassword,
 } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const router = express.Router();
@@ -21,6 +22,7 @@ router.get("/logged-in", isLoggedIn);
 
 // U
 router.patch("/update-user", isAuthenticated, updateUser);
+router.patch("/change-password", isAuthenticated, changePassword);
 
 // D
 
