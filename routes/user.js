@@ -7,6 +7,7 @@ const {
   isLoggedIn,
   updateUser,
   changePassword,
+  forgotPassword,
 } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const router = express.Router();
@@ -14,6 +15,7 @@ const router = express.Router();
 // C
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/forgot-password", forgotPassword);
 
 // R
 router.get("/logout", logout);
