@@ -5,15 +5,23 @@ const {
   logout,
   getUser,
   isLoggedIn,
+  updateUser,
 } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const router = express.Router();
 
+// C
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
+// R
 router.get("/logout", logout);
 router.get("/get-user", isAuthenticated, getUser);
 router.get("/logged-in", isLoggedIn);
+
+// U
+router.patch("/update-user", isAuthenticated, updateUser);
+
+// D
 
 module.exports = router;
