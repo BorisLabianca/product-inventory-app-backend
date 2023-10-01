@@ -48,4 +48,25 @@ const createProduct = asyncHandler(async (req, res) => {
   res.status(201).json(product);
 });
 
-module.exports = { createProduct };
+const getAllProducts = asyncHandler(async (req, res) => {
+  const products = await Product.find({ user: req.user._id }).sort(
+    "-createdAt"
+  );
+  res.status(200).json(products);
+});
+
+const getSingleProdcut = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found.");
+  }
+  if (product.user.toString() !== req.user._id.toString()) {
+    res.status(401);
+    throw new Error("User not owner of this product.");
+  }
+
+  res.status(200).json(product);
+});
+
+module.exports = { createProduct, getAllProducts, getSingleProdcut };

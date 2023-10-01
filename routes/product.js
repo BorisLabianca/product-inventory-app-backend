@@ -1,5 +1,9 @@
 const express = require("express");
-const { createProduct } = require("../controllers/prodcutControllers");
+const {
+  createProduct,
+  getAllProducts,
+  getSingleProdcut,
+} = require("../controllers/prodcutControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const { upload } = require("../utils/fileUpload");
 createProduct;
@@ -10,6 +14,8 @@ const router = express.Router();
 router.post("/create", isAuthenticated, upload.single("image"), createProduct);
 
 // R
+router.get("/all-products", isAuthenticated, getAllProducts);
+router.get("/product/:id", isAuthenticated, getSingleProdcut);
 
 // U
 
