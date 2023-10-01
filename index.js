@@ -5,6 +5,7 @@ const connectDB = require("./config/connectDB");
 require("dotenv").config();
 const errorHandler = require("./middlewares/errorMiddleware");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes imports
 const userRoutes = require("./routes/user");
