@@ -3,6 +3,7 @@ const {
   createProduct,
   getAllProducts,
   getSingleProdcut,
+  deleteProduct,
 } = require("../controllers/prodcutControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const { upload } = require("../utils/fileUpload");
@@ -20,5 +21,6 @@ router.get("/product/:id", isAuthenticated, getSingleProdcut);
 // U
 
 // D
+router.delete("/delete/:id", isAuthenticated, deleteProduct);
 
 module.exports = router;
