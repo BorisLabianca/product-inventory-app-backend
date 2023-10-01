@@ -102,13 +102,12 @@ const updateProduct = asyncHandler(async (req, res) => {
     );
   }
 
-  if (product.image && Object.keys(product.image) !== 0) {
+  if (product.image && Object.keys(product.image).length !== 0) {
     await cloudinary.uploader.destroy(product.image.publicId);
   }
 
   let fileData = {};
   if (req.file) {
-    console.log(req.file);
     let uploadedFile;
     try {
       uploadedFile = await cloudinary.uploader.upload(req.file.path, {
