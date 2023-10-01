@@ -14,7 +14,6 @@ const createProduct = asyncHandler(async (req, res) => {
   // Handle file upload
   let fileData = {};
   if (req.file) {
-    console.log(req.file);
     let uploadedFile;
     try {
       uploadedFile = await cloudinary.uploader.upload(req.file.path, {
@@ -30,6 +29,7 @@ const createProduct = asyncHandler(async (req, res) => {
       filePath: uploadedFile.secure_url,
       fileType: req.file.mimetype,
       fileSize: fileSizeFormatter(req.file.size, 2),
+      publicId: uploadedFile.public_id,
     };
   }
 
@@ -87,9 +87,69 @@ const deleteProduct = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Product successfully deleted." });
 });
 
+const updateProduct = asyncHandler(async (req, res) => {
+  const { name, category, quantity, price, description } = req.body;
+  const { id } = req.params;
+  const product = await Product.findById(id);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found.");
+  }
+  if (product.user.toString() !== req.user._id.toString()) {
+    res.status(401);
+    throw new Error(
+      "User not owner of this product. Cannot delete this product."
+    );
+  }
+
+  if (product.image && Object.keys(product.image) !== 0) {
+    await cloudinary.uploader.destroy(product.image.publicId);
+  }
+
+  let fileData = {};
+  if (req.file) {
+    console.log(req.file);
+    let uploadedFile;
+    try {
+      uploadedFile = await cloudinary.uploader.upload(req.file.path, {
+        folder: "product-inventory-app",
+        resource_type: "image",
+      });
+    } catch (error) {
+      res.status(500);
+      throw new Error("Image couldn't be uploaded.");
+    }
+    fileData = {
+      fileName: req.file.originalname,
+      filePath: uploadedFile.secure_url,
+      fileType: req.file.mimetype,
+      fileSize: fileSizeFormatter(req.file.size, 2),
+      publicId: uploadedFile.public_id,
+    };
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    { _id: id },
+    {
+      name,
+      category,
+      quantity,
+      price,
+      description,
+      image: Object.keys(fileData).length === 0 ? product?.image : fileData,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(200).json(updatedProduct);
+});
+
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProdcut,
   deleteProduct,
+  updateProduct,
 };

@@ -4,7 +4,8 @@ const {
   getAllProducts,
   getSingleProdcut,
   deleteProduct,
-} = require("../controllers/prodcutControllers");
+  updateProduct,
+} = require("../controllers/productControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const { upload } = require("../utils/fileUpload");
 createProduct;
@@ -19,7 +20,12 @@ router.get("/all-products", isAuthenticated, getAllProducts);
 router.get("/product/:id", isAuthenticated, getSingleProdcut);
 
 // U
-
+router.patch(
+  "/update/:id",
+  isAuthenticated,
+  upload.single("image"),
+  updateProduct
+);
 // D
 router.delete("/delete/:id", isAuthenticated, deleteProduct);
 
