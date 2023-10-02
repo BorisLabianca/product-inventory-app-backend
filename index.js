@@ -21,10 +21,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Routes imports
 const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
+const contactUsRoutes = require("./routes/contactUs");
 
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/contact-us", contactUsRoutes);
 
 app.all("*", (req, res) => {
   res.status(500).json({ message: "This page doesn't exist." });
