@@ -82,6 +82,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
     );
   }
 
+  if (product.image && Object.keys(product.image).length !== 0) {
+    await cloudinary.uploader.destroy(product.image.publicId);
+  }
+
   await product.deleteOne();
 
   res.status(200).json({ message: "Product successfully deleted." });
