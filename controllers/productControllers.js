@@ -106,14 +106,13 @@ const updateProduct = asyncHandler(async (req, res) => {
     );
   }
 
-  if (product.image && Object.keys(product.image).length !== 0) {
-    await cloudinary.uploader.destroy(product.image.publicId);
-  }
-
   let fileData = {};
   if (req.file) {
     let uploadedFile;
     try {
+      if (product.image && Object.keys(product.image).length !== 0) {
+        await cloudinary.uploader.destroy(product.image.publicId);
+      }
       uploadedFile = await cloudinary.uploader.upload(req.file.path, {
         folder: "product-inventory-app",
         resource_type: "image",
