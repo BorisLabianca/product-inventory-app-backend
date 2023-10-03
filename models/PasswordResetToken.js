@@ -4,7 +4,7 @@ const PasswordResetTokenSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "User",
+    ref: "user",
   },
   token: {
     type: String,
@@ -12,17 +12,12 @@ const PasswordResetTokenSchema = mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    expires: 1800,
-    default: Date.now(),
+    required: true,
   },
-  //   createdAt: {
-  //     type: Date,
-  //     required: true,
-  //   },
-  //   expiresAt: {
-  //     type: Date,
-  //     required: true,
-  //   },
+  expiresAt: {
+    type: Date,
+    required: true,
+  },
 });
 
 const PasswordResetToken = mongoose.model(
