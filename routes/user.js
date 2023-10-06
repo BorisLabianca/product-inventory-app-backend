@@ -11,6 +11,7 @@ const {
   resetPassword,
 } = require("../controllers/userControllers");
 const isAuthenticated = require("../middlewares/isAuthenticated");
+const { upload } = require("../utils/fileUpload");
 const router = express.Router();
 
 // C
@@ -24,7 +25,12 @@ router.get("/get-user", isAuthenticated, getUser);
 router.get("/logged-in", isLoggedIn);
 
 // U
-router.patch("/update-user", isAuthenticated, updateUser);
+router.patch(
+  "/update-user",
+  isAuthenticated,
+  upload.single("image"),
+  updateUser
+);
 router.patch("/change-password", isAuthenticated, changePassword);
 router.put("/reset-password/:resetToken", resetPassword);
 

@@ -5,6 +5,7 @@ const User = require("../models/User");
 const crypto = require("crypto");
 const PasswordResetToken = require("../models/PasswordResetToken");
 const sendEmail = require("../utils/sendEmail");
+const cloudinary = require("../cloudinary/index");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -167,16 +168,33 @@ const isLoggedIn = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
+  // console.log(req.file);
   const user = await User.findById(req.user._id);
 
   if (user) {
     const { name, email, photo, phone, bio } = user;
     user.email = email;
     user.name = req.body.name || name;
-    user.photo = req.body.photo || photo;
     user.phone = req.body.phone || phone;
     user.bio = req.body.bio || bio;
 
+    if (req.file) {
+      let uploadedFile;
+      try {
+        uploadedFile = await cloudinary.uploader.upload(req.file.path, {
+          folder: "product-inventory-app",
+          resource_type: "image",
+        });
+        console.log(uploadedFile);
+      } catch (error) {
+        res.status(500);
+        throw new Error("Image couldn't be uploaded.");
+      }
+      user.photo =
+        Object.keys(uploadedFile).length === 0
+          ? photo
+          : uploadedFile.secure_url;
+    }
     const updatedUser = await user.save();
 
     res.status(200).json({
